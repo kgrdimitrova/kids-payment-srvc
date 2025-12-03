@@ -5,6 +5,7 @@ import event.payment.service.PaymentService;
 import event.payment.web.dto.PaymentRequest;
 import event.payment.web.dto.PaymentResponse;
 import event.payment.web.mapper.DtoMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,8 @@ public class PaymentController {
         Payment payment = paymentService.upsertPayment(request);
 
         return ResponseEntity
-            .ok(DtoMapper.from(payment));
+                .status(HttpStatus.CREATED)
+                .body(DtoMapper.from(payment));
     }
 
     @PutMapping("/{eventId}/{userId}/status")
@@ -39,10 +41,19 @@ public class PaymentController {
                 .ok(DtoMapper.from(payment));
     }
 
-    @GetMapping
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByEventId(@RequestParam("eventId") UUID evenId) {
+    @GetMapping("/event")
+    public ResponseEntity<List<PaymentResponse>> getPaymentsByEventId(@RequestParam("eventId") UUID eventId) {
 
-        List<Payment> payments = paymentService.getAllByEventId(evenId);
+        List<Payment> payments = paymentService.getAllByEventId(eventId);
+        List<PaymentResponse> responses = payments.stream().map(DtoMapper::from).toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<PaymentResponse>> getPaymentsByUserId(@RequestParam("userId") UUID userId) {
+
+        List<Payment> payments = paymentService.getAllByUserId(userId);
         List<PaymentResponse> responses = payments.stream().map(DtoMapper::from).toList();
 
         return ResponseEntity.ok(responses);

@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
+import org.apache.poi.ss.usermodel.*;
 
 @Service
 public class PaymentService {
@@ -30,23 +31,14 @@ public class PaymentService {
 
     public Payment upsertPayment(PaymentRequest paymentRequest) {
 
-        Optional<Payment> existingPaymentOpt =
-                paymentRepository.findByEventIdAndUserId(
-                        paymentRequest.getEventId(),
-                        paymentRequest.getUserId()
-                );
+        Payment payment = getPayment(paymentRequest.getEventId(), paymentRequest.getUserId());
 
-        Payment payment;
-
-        if (existingPaymentOpt.isPresent()) {
-            // Update existing payment
-            payment = existingPaymentOpt.get();
+        if (payment != null) {
             payment.setAmount(paymentRequest.getAmount());
             payment.setType(paymentRequest.getType());
             payment.setStatus(paymentRequest.getStatus());
             payment.setUpdatedOn(LocalDateTime.now());
         } else {
-            // Create new payment
             payment = Payment.builder()
                     .userId(paymentRequest.getUserId())
                     .username(paymentRequest.getUsername())
@@ -60,30 +52,23 @@ public class PaymentService {
         }
 
         return paymentRepository.save(payment);
-        }
+    }
 
-        public Payment updateStatus(UUID eventID, UUID userId) {
+    public Payment updateStatus(UUID eventID, UUID userId) {
 
         Payment payment = getPayment(eventID, userId);
 
-            if (payment.getStatus() == PaymentStatus.PENDING) {
-                payment.setStatus(PaymentStatus.PAID);
-                throw new RuntimeException("Payment is already pending");
-            } else {
-                payment.setStatus(PaymentStatus.PENDING);
-                throw new RuntimeException("Payment is already pending");
-            }
-
-        //return paymentRepository.save(payment);
+        if (payment.getStatus() == PaymentStatus.PENDING) {
+            payment.setStatus(PaymentStatus.PAID);
+        } else {
+            payment.setStatus(PaymentStatus.PENDING);
         }
-
-        private Payment getPayment(UUID eventId, UUID userId) {
-            Optional<Payment> existingPaymentOpt =
-                    paymentRepository.findByEventIdAndUserId(
-                            eventId,
-                            userId
-                    );
-            return existingPaymentOpt.get();
-        }
+        return paymentRepository.save(payment);
     }
+
+    private Payment getPayment(UUID eventId, UUID userId) {
+
+        return paymentRepository.findByEventIdAndUserId(eventId, userId).orElse(null);
+    }
+}
 
