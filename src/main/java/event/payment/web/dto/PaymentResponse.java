@@ -18,6 +18,8 @@ public class PaymentResponse {
 
     private String username;
 
+    private String eventName;
+
     private BigDecimal amount;
 
     private PaymentType type;

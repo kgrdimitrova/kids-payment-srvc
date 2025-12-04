@@ -13,6 +13,7 @@ public class DtoMapper {
                 .eventId(payment.getEventId())
                 .userId(payment.getUserId())
                 .username(payment.getUsername())
+                .eventName(payment.getEventName())
                 .amount(payment.getAmount())
                 .type(payment.getType())
                 .status(payment.getStatus())

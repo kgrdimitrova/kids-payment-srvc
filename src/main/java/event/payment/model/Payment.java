@@ -30,6 +30,8 @@ public class Payment {
     @Column(nullable = false)
     private UUID eventId;
 
+    private String eventName;
+
     private BigDecimal amount;
 
     @Column(nullable = false)

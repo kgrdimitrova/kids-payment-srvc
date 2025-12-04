@@ -41,8 +41,8 @@ public class PaymentController {
                 .ok(DtoMapper.from(payment));
     }
 
-    @GetMapping("/event")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByEventId(@RequestParam("eventId") UUID eventId) {
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<List<PaymentResponse>> getPaymentsByEventId(@PathVariable UUID eventId) {
 
         List<Payment> payments = paymentService.getAllByEventId(eventId);
         List<PaymentResponse> responses = payments.stream().map(DtoMapper::from).toList();
@@ -50,8 +50,8 @@ public class PaymentController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<List<PaymentResponse>> getPaymentsByUserId(@RequestParam("userId") UUID userId) {
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PaymentResponse>> getPaymentsByUserId(@PathVariable UUID userId) {
 
         List<Payment> payments = paymentService.getAllByUserId(userId);
         List<PaymentResponse> responses = payments.stream().map(DtoMapper::from).toList();
