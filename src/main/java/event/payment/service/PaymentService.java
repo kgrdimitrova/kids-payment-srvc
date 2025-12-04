@@ -48,7 +48,6 @@ public class PaymentService {
                     .updatedOn(LocalDateTime.now())
                     .build();
         }
-
         return paymentRepository.save(payment);
     }
 

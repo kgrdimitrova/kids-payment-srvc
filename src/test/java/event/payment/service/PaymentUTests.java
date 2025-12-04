@@ -57,7 +57,6 @@ public class PaymentUTests {
         paymentService.updateStatus(eventId, userId);
 
         assertEquals(PaymentStatus.PAID, payment.getStatus());
-        //assertThat(user.getUpdatedOn()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS));
         verify(paymentRepository).save(payment);
     }
 
@@ -77,7 +76,6 @@ public class PaymentUTests {
         paymentService.updateStatus(eventId, userId);
 
         assertEquals(PaymentStatus.PENDING, payment.getStatus());
-        //assertThat(user.getUpdatedOn()).isCloseTo(LocalDateTime.now(), within(1, ChronoUnit.SECONDS));
         verify(paymentRepository).save(payment);
     }
 

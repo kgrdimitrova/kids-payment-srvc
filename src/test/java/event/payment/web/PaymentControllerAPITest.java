@@ -112,13 +112,11 @@ public class PaymentControllerAPITest {
 
         when(paymentService.getAllByEventId(eventId)).thenReturn(List.of(payment));
 
-        mockMvc.perform(get("/api/v1/payments/event")
-                        .param("eventId", eventId.toString()))
+        mockMvc.perform(get("/api/v1/payments/event/{eventId}", eventId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].eventId").value(eventId.toString()))
                 .andExpect(jsonPath("$[0].status").value("PENDING"));
 
         verify(paymentService).getAllByEventId(eventId);
     }
-
 }

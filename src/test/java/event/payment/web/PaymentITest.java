@@ -24,9 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Full integration test: boots the context with H2 and exercises controller + repository.
- */
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
@@ -95,14 +92,19 @@ public class PaymentITest {
                 .build();
         paymentRepository.save(p1);
 
-        mockMvc.perform(get("/api/v1/payments/event")
-                        .param("eventId", eventId.toString()))
+        mockMvc.perform(get("/api/v1/payments/event/{eventId}", eventId))
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].eventId").value(eventId.toString()))
-                .andExpect(jsonPath("$[0].status").value("PAID"));
+                .andExpect(jsonPath("$[0].status").value("PAID"))
+                .andExpect(jsonPath("$[0].username").value("u1"));
 
         List<Payment> byEvent = paymentRepository.findAllByEventId(eventId);
         assertThat(byEvent).hasSize(1);
+        Payment persisted = byEvent.get(0);
+        assertThat(persisted.getUserId()).isEqualTo(userId);
+        assertThat(persisted.getAmount()).isEqualByComparingTo(BigDecimal.valueOf(20));
+        assertThat(persisted.getStatus()).isEqualTo(PaymentStatus.PAID);
     }
 
     @Test
