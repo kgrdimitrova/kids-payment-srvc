@@ -1,4 +1,4 @@
-{"variant":"standard","title":"Payment Service README","id":"57291"}
+
 # Payment Service (payment-srvc)
 
 ## Project Description
